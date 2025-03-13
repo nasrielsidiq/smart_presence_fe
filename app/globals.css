@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
 
 :root {
   --background: #ffffff;
@@ -12,6 +15,17 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --color-brightAzure: #008bff;
+  --color-dodgerBlue: #0163c6;
+  --color-goldenYellow: #f1b813;
+  --color-skyBlue: #00aaff;
+  --color-brightBlue: #0180FF;
+  --color-brightGold: #efd01b;
+  --color-aliceBlue: #f9fbfd;
+  --color-charcoalBlack: #131919;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -23,4 +37,20 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.rotate-0 {
+  transform: rotate(-90deg);
+}
+
+.rotate-90 {
+  transform: rotate(-90deg);
+}
+
+.transition-transform {
+  transition: transform 0.3s ease;
+}
+
+.font-bold {
+  font-weight: bold;
 }
