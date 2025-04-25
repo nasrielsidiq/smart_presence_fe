@@ -16,6 +16,7 @@
 }
 
 @theme {
+  --scrollbar-none: none;
   --color-brightAzure: #008bff;
   --color-dodgerBlue: #0163c6;
   --color-goldenYellow: #f1b813;
@@ -28,8 +29,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
   }
 }
 

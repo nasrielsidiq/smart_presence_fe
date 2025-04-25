@@ -1,37 +1,41 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import AllAttendencePercentege from './pages/allAttendencePercentege';
 import DataCount from './pages/dataCount';
 import AttendanceDetailLeaderboard from './pages/attendenceDetailLeaderboard';
+import Cookies from 'js-cookie';
+import { ENDPOINTS } from '@/utils/config';
 
 export default function DashboardPage() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const response = await fetch('https://95b0-36-93-6-234.ngrok-free.app/api/users', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      setData(result);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setError(error.message);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+      const token = Cookies.get('token');
+      async function fetchData() {
+        try {
+          const response = await fetch(ENDPOINTS.DASHBOARD, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+              'authorization': 'Bearer ' + token,
+            },
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const result = await response.json();
+          setData(result);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setError(error.message);
+        }
+      }
+  
+      fetchData();
+    }, [])
 
   return (
     <div className="p-4">
@@ -43,11 +47,11 @@ export default function DashboardPage() {
         </div>
         <span className="pl-7 font-bold">Overview</span>
       </div>
-      <DataCount />
+      <DataCount cData={data} />
       <AllAttendencePercentege />
       <AttendanceDetailLeaderboard />
 
-      {error ? (
+      {/* {error ? (
         <p className="text-red-500">Error: {error}</p>
       ) : data ? (
         <div>
@@ -56,7 +60,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <p>Loading...</p>
-      )}
+      )} */}
     </div>
   );
 }

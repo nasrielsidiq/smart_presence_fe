@@ -1,14 +1,14 @@
 'use client'
 
 import { ENDPOINTS } from '@/utils/config';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import React from 'react';
 import Image from 'next/image';
 
 const LoginImage = () => (
-    <Image src="/img/login.png" alt="Login Image" layout="fill" objectFit="cover" className="rounded-tr-3xl rounded-br-3xl" />
+    <Image src="/img/login.png" alt="Login Image" layout="fill" objectFit="cover" className="object-cover rounded-tr-3xl rounded-br-3xl" />
 );
 
 export default function App() {
@@ -16,6 +16,13 @@ export default function App() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+
+    useEffect(() => {
+        const token = Cookies.get('token');
+        if (token) {
+            router.push('/dashboard');
+        }
+    }, []);
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
@@ -30,12 +37,13 @@ export default function App() {
                 body: JSON.stringify({ username, password }),
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error('Login failed');
             }
 
             const data = await response.json();
             Cookies.set('token', data.token, { expires: 7 });
+            Cookies.set('privilage', data.user.privilege, { expires: 7 });
             router.push('/dashboard');
         } catch (error) {
             console.error('Login failed:', error);
@@ -46,14 +54,16 @@ export default function App() {
     return (
         <>
             <div className="flex bg-white shadow-lg rounded-lg">
-                <LoginImage />
+                <div className='w-1/2 h-screen relative'>
+                    <LoginImage />
+                </div>
 
                 <div className="flex flex-col justify-center items-center flex-1 px-12">
                     <div className="items-start">
                         <div className="font-poppins">
                             <span className="text-3xl font-bold">Sign In</span>
                             <p className="font-medium">
-                                Selamat Datang di Smart Presence 
+                                Selamat Datang di Smart Presence
                                 <span className="text-goldenYellow font-semibold">Antares</span>
                             </p>
                             <p className="text-xs text-gray-500">

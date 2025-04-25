@@ -7,24 +7,20 @@ import ModalCreate from "./modalCreate";
 import ModalUpdate from "./modalUpdate";
 import Swal from "sweetalert2";
 
-
-export default function EmployeeDataPage() {
+export default function DivisionPage() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
-    const [isDivisionDropdownOpen, setIsDivisionDropdownOpen] = useState(false);
     const [isOfficeDropdownOpen, setIsOfficeDropdownOpen] = useState(false);
-    const [divison, setDivision] = useState(null)
-    const [office, setOffice] = useState(null)
-    const [selectedDivision, setSelectedDivision] = useState("")
-    const [selectedOffice, setSelectedOffice] = useState("")
+    const [isPrevillageDropdownOpen, setIsPrevillageDropdownOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-    const [selectedKey, setSelectedKey] = useState("")
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [refreshFetch, setRefreshFetch] = useState(false);
     const [deleteMessage, setDeleteMessage] = useState(null);
+    const [office, setOffice] = useState(null);
+    const [selectedOffice, setSelectedOffice] = useState("");
+    const [selectedKey, setSelectedKey] = useState("");
     const [page, setPage] = useState(1);
-
 
     const closeCreateModal = () => {
         setIsCreateModalOpen(false);
@@ -36,30 +32,11 @@ export default function EmployeeDataPage() {
         setSelectedUserId(null);
         setRefreshFetch(true)
     };
-    const handleDivisionChange = (division) => {
-        setSelectedDivision(division);
-        setPage(1);
-        setRefreshFetch(true);
-        setIsDivisionDropdownOpen(false);
-    };
 
-    const handleOfficeChange = (office) => {
-        setSelectedOffice(office);
-        setPage(1);
-        setRefreshFetch(true);
-        setIsOfficeDropdownOpen(false);
-    };
-
-    const handleSearch = (search) => {
-        setSelectedKey(search);
-        setPage(1);
-        setRefreshFetch(true);
-    }
-
-    const deleteEmployee = async (userId) => {
+    const deleteDivision = async (userId) => {
         try {
             const token = Cookies.get('token');
-            const response = await fetch(ENDPOINTS.EMPLOYEES + '/' + userId, {
+            const response = await fetch(ENDPOINTS.DIVISIONS + '/' + userId, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,7 +59,7 @@ export default function EmployeeDataPage() {
         async function fetchData() {
             try {
                 const token = Cookies.get('token');
-                const response = await fetch(ENDPOINTS.EMPLOYEES + `?page=${page}&limit=5&division=${selectedDivision}&office=${selectedOffice}&key=${selectedKey}`, {
+                const response = await fetch(ENDPOINTS.DIVISIONS + `?limit=5&page=${page}&office=${selectedOffice}&key=${selectedKey}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -109,20 +86,6 @@ export default function EmployeeDataPage() {
         const token = Cookies.get('token');
         async function fetchData() {
             try {
-                const divisionResponse = await fetch(ENDPOINTS.DIVISIONS, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true',
-                        'authorization': 'Bearer ' + token,
-                    },
-                });
-                if (!divisionResponse.ok) {
-                    throw new Error(`HTTP error! status: ${divisionResponse.status}`);
-                }
-                const divisionResult = await divisionResponse.json();
-                setDivision(divisionResult.divisions.map(division => ({ value: division.id, label: division.name })));
-
                 const officeResponse = await fetch(ENDPOINTS.OFFICES, {
                     method: 'GET',
                     headers: {
@@ -145,13 +108,26 @@ export default function EmployeeDataPage() {
         fetchData();
     }, [])
 
-    const toggleDivisionDropdown = () => {
-        setIsDivisionDropdownOpen(!isDivisionDropdownOpen);
-    };
-
     const toggleOfficeDropdown = () => {
         setIsOfficeDropdownOpen(!isOfficeDropdownOpen);
     };
+
+    const togglePrevillageDropdown = () => {
+        setIsPrevillageDropdownOpen(!isPrevillageDropdownOpen);
+    };
+
+    const handleOfficeChange = (office) => {
+        setSelectedOffice(office);
+        setPage(1);
+        setRefreshFetch(true);
+        setIsOfficeDropdownOpen(false);
+    };
+
+    const handleSearch = (search) => {
+        setSelectedKey(search);
+        setPage(1);
+        setRefreshFetch(true);
+    }
 
     const openCreateModal = () => {
         setIsCreateModalOpen(true);
@@ -179,31 +155,12 @@ export default function EmployeeDataPage() {
                     <span className="pt-[2px]">Management</span>
                     <p>/</p>
                 </div>
-                <span className="pl-7 font-bold">Employee Data</span>
+                <span className="pl-7 font-bold">Division</span>
             </div>
 
             <div className="bg-white p-6 rounded-lg shadow-lg mt-16">
                 <div className="flex justify-between items-center mb-4 mt-6">
                     <div className="flex gap-3">
-                        <div className="relative">
-                            <button
-                                className="menu-button bg-dodgerBlue text-white px-8 py-2 rounded-xl shadow-md flex items-center gap-3 text-xs font-bold"
-                                onClick={toggleDivisionDropdown}
-                            >
-                                Divisi / Unit
-                                <i className="bi bi-chevron-down text-dodgerBlue bg-white px-[2px] rounded-md"></i>
-                            </button>
-
-                            <div className={`menu-dropdown absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 ${isDivisionDropdownOpen ? 'block' : 'hidden'}`}>
-                                <div className="py-1 max-h-45 overflow-hidden overflow-y-auto">
-                                    <a onClick={e => { handleDivisionChange("") }} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-slate-200 hover:text-black">All</a>
-                                    {divison && divison.map((item, index) => (
-                                        <a key={index} onClick={e => { handleDivisionChange(item.value) }} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-slate-200 hover:text-black">{item.label}</a>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="relative">
                             <button
                                 className="menu-button bg-dodgerBlue text-white px-6 py-2 rounded-xl shadow-md flex items.center gap-3 text-xs font-bold"
@@ -234,7 +191,7 @@ export default function EmployeeDataPage() {
 
                         <button className="bg-brightGold text-white text-xs font-bold px-4 py-1 rounded-xl shadow-md flex items-center gap-2" onClick={openCreateModal}>
                             <i className="bi bi-plus text-lg"></i>
-                            Add Employee
+                            Add Divison
                         </button>
                     </div>
                 </div>
@@ -244,22 +201,22 @@ export default function EmployeeDataPage() {
                         <thead className="bg-dodgerBlue/10 text-dodgerBlue">
                             <tr>
                                 <th className="px-4 py-2 text-center">Name</th>
-                                <th className="px-4 py-2 text-center">Divisi / Unit</th>
+                                {/* <th className="px-4 py-2 text-center">Divisi / Unit</th> */}
                                 <th className="px-4 py-2 text-center">Office</th>
                                 <th className="px-4 py-2 text-center">Alamat</th>
-                                <th className="px-4 py-2 text-center">Id Card</th>
+                                {/* <th className="px-4 py-2 text-center">Id Card</th> */}
                                 <th className="px-4 py-2 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                data && data.employees.map((item, index) => (
+                                data && data.divisions.map((item, index) => (
                                     <tr key={index} className={`border-t border-black/30 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
-                                        <td className="px-4 py-2 text-center">{item.full_name}</td>
-                                        <td className="px-4 py-2 text-center">{item.division_name ? item.division_name : "no division"}</td>
+                                        <td className="px-4 py-2 text-center">{item.name}</td>
+                                        {/* <td className="px-4 py-2 text-center">{item.division_name}</td> */}
                                         <td className="px-4 py-2 text-center">{item.office_name}</td>
-                                        <td className="px-4 py-2 text-center">{item.office_address}</td>
-                                        <td className="px-4 py-2 text-center">{item.serial_id}</td>
+                                        <td className="px-4 py-2 text-center">{item.address}</td>
+                                        {/* <td className="px-4 py-2 text-center">{item.serial_id}</td> */}
                                         <td className="px-4 py-2 text-center">
                                             <button
                                                 className="bg-skyBlue text-white px-6 py-[6px] rounded-xl"
@@ -281,11 +238,11 @@ export default function EmployeeDataPage() {
                                                         confirmButtonText: 'Yes, delete it!'
                                                     }).then((result) => {
                                                         if (result.isConfirmed) {
-                                                            deleteEmployee(item.id);
+                                                            deleteDivision(item.id);
                                                             if (deleteMessage === null) {
                                                                 Swal.fire(
                                                                     'Deleted!',
-                                                                    'The employee has been deleted.',
+                                                                    'The division has been deleted.',
                                                                     'success'
                                                                 );
                                                             } else {
