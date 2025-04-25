@@ -8,10 +8,8 @@ import ModalCreate from "./modalCreate";
 export default function LeaveReportPage() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
-    const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
     const [isDivisionDropdownOpen, setIsDivisionDropdownOpen] = useState(false);
     const [isOfficeDropdownOpen, setIsOfficeDropdownOpen] = useState(false);
-    const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [refreshFetch, setRefreshFetch] = useState(false);
     const [selectedDivision, setSelectedDivision] = useState("");
@@ -188,9 +186,6 @@ export default function LeaveReportPage() {
                         <button className="bg-brightGold text-white text-xs font-bold px-4 py-1 rounded-xl shadow-md flex items-center gap-2" onClick={openCreateModal}>
                             <i className="bi bi-plus text-lg"></i>
                             Add Leave
-                        </button>
-                        <button className="bg-brightGold text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md flex items-center gap-2">
-                            Download Review
                         </button>
                     </div>
                 </div>

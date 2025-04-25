@@ -12,9 +12,7 @@ export default function individualReportPage() {
     const [divison, setDivision] = useState(null);
     const [selectedDivision, setSelectedDivision] = useState("");
     const [office, setOffice] = useState(null);
-    const [selectedStatus, setSelectedStatus] = useState("");
     const [selectedOffice, setSelectedOffice] = useState("");
-    const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
     const [isDivisionDropdownOpen, setIsDivisionDropdownOpen] = useState(false);
     const [isOfficeDropdownOpen, setIsOfficeDropdownOpen] = useState(false);
     const [page, setPage] = useState(1);
@@ -25,7 +23,7 @@ export default function individualReportPage() {
         const token = Cookies.get('token');
         async function fetchData() {
             try {
-                const response = await fetch(ENDPOINTS.ATTENDANCES + `/individual?page=${page}&limit=5&division=${selectedDivision}&office=${selectedOffice}&category=${selectedStatus}&key=${keySearch}`, {
+                const response = await fetch(ENDPOINTS.ATTENDANCES + `/individual?page=${page}&limit=5&division=${selectedDivision}&office=${selectedOffice}&key=${keySearch}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -120,9 +118,6 @@ export default function individualReportPage() {
         }
     };
 
-    const toggleStatusDropdown = () => {
-        setIsStatusDropdownOpen(!isStatusDropdownOpen);
-    };
 
     const toggleDivisionDropdown = () => {
         setIsDivisionDropdownOpen(!isDivisionDropdownOpen);
@@ -144,12 +139,6 @@ export default function individualReportPage() {
         setPage(1);
         setRefreshFetch(true);
         setIsOfficeDropdownOpen(false);
-    };
-    const handleStatusChange = (status) => {
-        setSelectedStatus(status);
-        setPage(1);
-        setRefreshFetch(true);
-        setIsStatusDropdownOpen(false);
     };
     const handleSearch = (search) => {
         setKeySearch(search);
@@ -183,25 +172,6 @@ export default function individualReportPage() {
                 <div className="flex justify-between items-center mb-4 mt-6">
                     <div className="flex gap-3">
 
-                        <div className="relative">
-                            <button
-                                className="cursor-pointer menu-button bg-dodgerBlue text-white px-6 py-2 rounded-xl shadow-md flex items-center gap-3 text-xs font-bold"
-                                onClick={toggleStatusDropdown}
-                            >
-                                Status
-                                <i className="bi bi-chevron-down text-dodgerBlue bg-white px-[2px] rounded-md"></i>
-                            </button>
-
-                            <div className={`menu-dropdown absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 ${isStatusDropdownOpen ? 'block' : 'hidden'}`}>
-                                <div className="py-1 max-h-45 overflow-hidden overflow-y-auto">
-                                    <a onClick={e => { handleStatusChange("") }} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-slate-200 hover:text-black">All</a>
-                                    <a onClick={e => { handleStatusChange("discipline") }} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-slate-200 hover:text-black">Discipline</a>
-                                    <a onClick={e => { handleStatusChange("undiscipline") }} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-slate-200 hover:text-black">Undiscipline</a>
-                                    <a onClick={e => { handleStatusChange("overtime") }} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-slate-200 hover:text-black">Overtime</a>
-                                    <a onClick={e => { handleStatusChange("on_leave") }} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-slate-200 hover:text-black">On Leave</a>
-                                </div>
-                            </div>
-                        </div>
 
                         <div className="relative">
                             <button
